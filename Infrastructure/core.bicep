@@ -10,24 +10,20 @@ param vnetsettings object = {
     subnets:[
    {
      name: 'subnet1'
-     addressPrefix: '10.0.0.0/20'
+     addressPrefix: '10.0.0.0/22'
   
    }
  ]
 }
-
-
 resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
   name:'${prefix}-default-nsg'
   location: location
   properties: {
-    securityRules: [
-    
-      
+    securityRules: [   
+
     ]
   }
 }
-
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   name: '${prefix}-vnet'
@@ -39,7 +35,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
     subnets: [ for subnet in vnetsettings.subnets:{
         name: subnet.name
         properties: {
-          addressPrefixes: subnet.addressPrefix
+          addressPrefix: subnet.addressPrefix
           networkSecurityGroup: {
             id:networkSecurityGroup.id
            }
