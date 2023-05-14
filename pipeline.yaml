@@ -1,0 +1,108 @@
+variables:
+
+# Name of the service connection (within Azure DevOps) which targets an Azure subscription. 
+# This should be different for each environment as it is assumed there will be a seperate subscription for each enviornment, therefore a seperate service connection.
+- name: azure_service_connection
+  value: adoconnectionpolicy
+
+# Hosted Agent Details
+- name: hosted_agent_vm_image
+  value: 'ubuntu-latest' 
+
+# Location details 
+- name: location
+  value: 'uksouth'
+
+# Source code folder
+- name: Source_Code_Folder
+  value: 'lamda-api-dev'  #change
+
+# # Target environment variable. Values could be: sbox | dev | test | preprod | prod 
+# - name: env
+#   value: sbox
+
+  #-------------------------------------------------------------#
+  #         Pipeline Code                                       #
+  #-------------------------------------------------------------#
+
+
+name: NCA_ACR_Pipeline_$(Rev:r)
+
+trigger: none
+
+stages:
+## Release Stage 
+- stage: Build_Stage
+  displayName: 'Build Stage' 
+  jobs:
+  - job: Build
+    pool:
+      vmImage: '$(hosted_agent_vm_image)'
+    steps:
+      - checkout: self
+
+      - script: echo Please wait...Deployment is starting.....!
+        displayName: 'Run Build steps'
+     
+      #Archive directory            
+      - task: ArchiveFiles@2
+        displayName: 'Run Build steps 2'
+        inputs:
+          rootFolderOrFile: '$(Build.SourcesDirectory)'
+          includeRootFolder: false
+          archiveType: 'tar'
+          tarCompression: 'gz'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber).tgz'
+          replaceExistingArchive: true
+          displayName: 'Create Deployment Artifact' 
+      
+      # Publish archive as Artifact  
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish artifact'
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
+
+
+## Release Stage 
+
+- stage: Release_Stage 
+  displayName: 'Release Stage' 
+  dependsOn: Build_Stage
+  condition: succeeded()
+  jobs:
+  - job: Deploy
+    pool:
+      vmImage: '$(hosted_agent_vm_image)'
+    steps:
+    
+    # Download Artifact 
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download artifact'
+      inputs:
+        artifactName: 'drop'
+       
+    
+    # Extract Archive    
+    - task: ExtractFiles@1
+      displayName: 'Extract Artifact'
+      inputs:
+        archiveFilePatterns: '$(System.ArtifactsDirectory)/drop/$(Build.BuildNumber).tgz'
+        destinationFolder: '$(System.DefaultWorkingDirectory)/'
+        cleanDestinationFolder: true
+    
+    # Run deployment files
+    - task: AzureCLI@2
+      displayName: 'Deploy Bicep file'
+      inputs:
+        azureSubscription: $(azure_service_connection)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Deploying Bicep file
+          az deployment sub create \
+            --name $(Build.BuildNumber) \
+            --template-file $(System.DefaultWorkingDirectory)/core.bicep \
+            --location $(location)
+            
