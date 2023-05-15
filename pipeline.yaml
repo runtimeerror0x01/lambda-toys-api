@@ -26,7 +26,7 @@ variables:
   #-------------------------------------------------------------#
 
 
-name: NCA_ACR_Pipeline_$(Rev:r)
+name: LAMBDA_TOYS_API_$(Rev:r)
 
 trigger: none
 
@@ -103,6 +103,6 @@ stages:
           # Deploying Bicep file
           az deployment sub create \
             --name $(Build.BuildNumber) \
-            --template-file $(System.DefaultWorkingDirectory)Infrastructure/core.bicep \
+            --template-file $(System.DefaultWorkingDirectory)main.bicep \
             --location $(location)
             
