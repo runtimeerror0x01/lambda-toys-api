@@ -8,9 +8,7 @@ param location string = 'uksouth'
 param vnetResourceGroupName string = 'lambda-toys-api-vnet' //change
 @description('The Resource Group to deploy resources to.')
 param infraResourceGroupName string = 'lambda-toys-api-infrastructure' //change
-
-
-
+@description('The Name for Resources.')
 param prefix string = 'labda-toys-api'
 
 // Create Resource Group For Vnet
@@ -27,8 +25,6 @@ resource infrastructure 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   location: location
 }
 
-
-
 // Create Virtual Network, Subnet, NSG
 module Network './Infrastructure/vnet_deploy.bicep' = {
   name: '${uniqueString(deployment().name, location)}-network-deployment'
@@ -39,15 +35,15 @@ module Network './Infrastructure/vnet_deploy.bicep' = {
   }
 }
 
-// Create Virtual Network, Subnet, NSG
-module Database './Infrastructure/database_deploy.bicep' = {
-  name: '${uniqueString(deployment().name, location)}-database-deployment'
-  scope: resourceGroup(infrastructure.name)
-  params: {
-    location:location
-    prefix: prefix
-  }
-}
+// Create Cosmos DB
+// module Database './Infrastructure/database_deploy.bicep' = {
+//   name: '${uniqueString(deployment().name, location)}-database-deployment'
+//   scope: resourceGroup(infrastructure.name)
+//   params: {
+//     location:location
+//     prefix: prefix
+//   }
+// }
 
 
 // Create Private DNS Zone
