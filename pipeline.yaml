@@ -103,6 +103,6 @@ stages:
           # Deploying Bicep file
           az deployment sub create \
             --name $(Build.BuildNumber) \
-            --template-file $(System.DefaultWorkingDirectory)main.bicep \
+            --template-file $(System.DefaultWorkingDirectory)/main.bicep \
             --location $(location)
             
