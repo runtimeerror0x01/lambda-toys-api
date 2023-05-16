@@ -69,5 +69,28 @@ module privateDNSZone './Infrastructure/privateDns_deploy.bicep' = {
    }
  }
 
+// Create ACR & KeyVault
 
+module NCA_ACR './Infrastructure/ACR_deploy.bicep' = {
+  name: '${uniqueString(deployment().name, location)}-nca-acr-deployment' 
+  scope: resourceGroup(infrastructure.name)
+  params: {
+    // name: 'NCAContainerRegistry001'
+    // acrAdminUserEnabled: false
+    // acrSku: 'Premium'
+    // anonymousPullEnabled: false
+    // azureADAuthenticationAsArmPolicyStatus: 'enabled'
+    // exportPolicyStatus: 'enabled'
+       location: location
+    // publicNetworkAccess: 'Disabled'
+    // quarantinePolicyStatus: 'enabled'
+    // retentionPolicyStatus: 'enabled'
+    // retentionPolicyDays: 15 
+    // networkRuleBypassOptions: 'AzureServices'
+    // zoneRedundancy: 'Enabled'
+    // tags: tags
+   
+    
+  }
+}
 
