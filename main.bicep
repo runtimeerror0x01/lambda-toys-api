@@ -45,7 +45,6 @@ module Database './Infrastructure/database_deploy.bicep' = {
   }
 }
 
-
 // Create Private DNS Zone
 module privateDNSZone './Infrastructure/privateDns_deploy.bicep' = {
   name: '${uniqueString(deployment().name, location)}-nca-privatednszone-deployment'
@@ -65,7 +64,7 @@ module privateDNSZone './Infrastructure/privateDns_deploy.bicep' = {
      prefix: prefix
      location: location
      resourceID: Database.outputs.cosmosResourceId
-     subnetId: Network.outputs.subnetId
+     subnetId: Network.outputs.subnet1Id
      privateDnsZoneId: privateDNSZone.outputs.privateDnsZoneId
    }
  }
