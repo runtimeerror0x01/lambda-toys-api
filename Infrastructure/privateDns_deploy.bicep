@@ -5,7 +5,7 @@ param prefix string
 
 
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: 'privatelink.documents.azure.com'
+  name: 'privatelink.documents.azure.com' // this is the zone you need to use, look this up in ms docs to see which one you need for your resource.
   location: 'global'
 }
 
@@ -23,4 +23,5 @@ resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLin
 
 }
 
-
+@description('The resource ID of the CosmosSQL DataBase.')
+output privateDnsZoneId string = privateDnsZone.id

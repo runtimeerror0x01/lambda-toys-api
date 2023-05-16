@@ -66,11 +66,7 @@ module privateDNSZone './Infrastructure/privateDns_deploy.bicep' = {
      location: location
      resourceID: Database.outputs.cosmosResourceId
      subnetId: Network.outputs.subnetId
-//     subnetName: NCA_ACR_Subnet.outputs.subnetName
-//     privateDnsZoneId: privateDNSZone.outputs.privateDnsZoneResourceId
-//     privatelinkName: 'NCRprivateLink'
-
-//     tags: tags
+     privateDnsZoneId: privateDNSZone.outputs.privateDnsZoneId
    }
  }
 
