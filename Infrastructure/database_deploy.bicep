@@ -40,7 +40,7 @@ resource sqlDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2021-06-15' =
   }
 }
 
-
+//tables
 resource sqlContainerName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2021-06-15' = {
   parent: sqlDb 
   name: '${prefix}-orders'
@@ -57,3 +57,5 @@ resource sqlContainerName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/co
   }
 }
 
+@description('The resource ID of the CosmosSQL DataBase.')
+output cosmosResourceId string = sqlDb.id

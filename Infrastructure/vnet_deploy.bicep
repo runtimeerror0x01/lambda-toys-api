@@ -39,6 +39,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
           networkSecurityGroup: {
             id:networkSecurityGroup.id
            }
+          // privateEndpointNetworkPolicies: 'disabled'    
       }
    } ]
   }
@@ -46,3 +47,5 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
 
 @description('The resource ID of the virtual network.')
 output virtualNetworkId string = virtualNetwork.id
+@description('The resource ID of the Subnet.')
+output subnetId string = virtualNetwork.properties.subnets[0].id

@@ -9,7 +9,7 @@ param vnetResourceGroupName string = 'lambda-toys-api-vnet' //change
 @description('The Resource Group to deploy resources to.')
 param infraResourceGroupName string = 'lambda-toys-api-infrastructure' //change
 @description('The Name for Resources.')
-param prefix string = 'labda-toys-api'
+param prefix string = 'labda-dev'
 
 // Create Resource Group For Vnet
 // =================================
@@ -35,19 +35,19 @@ module Network './Infrastructure/vnet_deploy.bicep' = {
   }
 }
 
-// Create Cosmos DB
-// module Database './Infrastructure/database_deploy.bicep' = {
-//   name: '${uniqueString(deployment().name, location)}-database-deployment'
-//   scope: resourceGroup(infrastructure.name)
-//   params: {
-//     location:location
-//     prefix: prefix
-//   }
-// }
+//Create Cosmos DB
+module Database './Infrastructure/database_deploy.bicep' = {
+  name: '${uniqueString(deployment().name, location)}-database-deployment'
+  scope: resourceGroup(infrastructure.name)
+  params: {
+    location:location
+    prefix: prefix
+  }
+}
 
 
 // Create Private DNS Zone
-module privateDNSZone './Infrastructure/dns_deploy.bicep' = {
+module privateDNSZone './Infrastructure/privateDns_deploy.bicep' = {
   name: '${uniqueString(deployment().name, location)}-nca-privatednszone-deployment'
   scope: resourceGroup(labdaToysApi.name)
   params: {
@@ -58,21 +58,21 @@ module privateDNSZone './Infrastructure/dns_deploy.bicep' = {
 
 
 // // Create Private Endpoint
-// module privateEndpointDeploy './bicep/PrivateEndpoint/deploy.bicep' = {
-//   name: '${uniqueString(deployment().name, location)}-nca-privateendpoint-deployment'
-//   scope: resourceGroup(NCA_ACR_RG.name)
-//   params: {
-//     endPointName: 'NCAPrivateEndpoint'
-//     location: location
-//     resourceID: NCA_ACR.outputs.resourceId
-//     subnetId: NCA_ACR_Subnet.outputs.subnetId
+ module privateEndpointDeploy './Infrastructure/endpoint_deploy.bicep' = {
+   name: '${uniqueString(deployment().name, location)}-nca-privateendpoint-deployment'
+   scope: resourceGroup(labdaToysApi.name)
+   params: {
+     prefix: prefix
+     location: location
+     resourceID: Database.outputs.cosmosResourceId
+     subnetId: Network.outputs.subnetId
 //     subnetName: NCA_ACR_Subnet.outputs.subnetName
 //     privateDnsZoneId: privateDNSZone.outputs.privateDnsZoneResourceId
 //     privatelinkName: 'NCRprivateLink'
 
 //     tags: tags
-//   }
-// }
+   }
+ }
 
 
 
